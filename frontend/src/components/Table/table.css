@@ -1,0 +1,36 @@
+.ag-theme-custom {
+  --ag-background-color: #f5f5f5; /* Background color of the grid */
+  --ag-header-background-color: #fff5f5; /* Header background color */
+  --ag-header-text-color: #ffffff; /* Header text color */
+  --ag-odd-row-background-color: #ffffff; /* Background color for odd rows */
+  --ag-even-row-background-color: #e0f7fa; /* Background color for even rows */
+  --ag-font-family: 'Roboto', sans-serif; /* Font for the grid */
+  --ag-border-color: #cccccc; /* Border color for cells */
+}
+
+.ag-theme-custom .ag-row:hover {
+  background-color: pink !important; /* Light gray color */
+  color: whitesmoke; /* Text color on hover */
+  cursor: pointer; /* Optional: Add pointer cursor on hover */
+}
+
+/* Optional: Add specific hover effect for selected rows */
+.ag-theme-custom .ag-row.ag-row-selected:hover {
+  background-color: pink !important; /* Light cyan color */
+}
+
+.ag-root ::-webkit-scrollbar {
+  width: 1.5px;
+  height: 1.5px;
+}
+.ag-root ::-webkit-scrollbar-button {
+  background: pink;
+}
+
+.ag-root ::-webkit-scrollbar-track-piece {
+  background: pink;
+}
+
+.ag-root ::-webkit-scrollbar-thumb {
+  background: #fff5f5;
+}
