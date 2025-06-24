@@ -8,6 +8,9 @@ const orderRoutes = require('./routes/orderRoutes')
 const allocateRoutes = require('./routes/allocateRoutes');
 
 const cors = require('cors');
+
+require("./jobs/allocateOrdersJob");
+
 const port = process.env.PORT || 5001
 const connectDB = require('./config/db')
 

@@ -8,13 +8,30 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import OrderList from "./OrderList";
 import {createOrder} from "../features/order/orderSlice"
+import axios from "axios";
 const OrderForm = () => {
   const dispatch = useDispatch();
-  const warehouses = useSelector((state: RootState) => state.warehouse.data);
+  // const warehouses = useSelector((state: RootState) => state.warehouse.data);
+    
+  // const warehouseLoading = useSelector((state: RootState) => state.warehouse.isLoading);
+    const[wareHouse,setWareHouse]=useState([])
+  console.log(wareHouse,">>>>>>>>>>>>>>>>>>>>>>>");
+  
+  useEffect(() => {
+    const fetchWarehouse = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/api/warehouses");
+        setWareHouse(response.data); 
+      } catch (error) {
+        console.error("Failed to fetch warehouses:", error);
+      }
+    };
 
+    fetchWarehouse()
+  }, []);
+// console.log("warehouses:", warehouses, warehouseLoading)
   const agents = useSelector((state: RootState) => state.agent.data);
 
-  console.log(warehouses, "nnnnnnnnnnnnnnnnnnnn");
 
   
   const [form, setForm] = useState({
@@ -29,7 +46,7 @@ const OrderForm = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    dispatch(fetchWarehouse() as any);
+    // dispatch(fetchWarehouse() as any);
     dispatch(fetchAgents() as any);
   }, [dispatch]);
 
@@ -47,13 +64,13 @@ const OrderForm = () => {
     e.preventDefault();
 
     console.log("Submitting Order:", form);
-    // ✅ Submit form data to your API
+    
     try {
-        await dispatch(createOrder(form) as any); // ✅ Dispatch async thunk with form data
-        setMessage("✅ Order created successfully!");
+        await dispatch(createOrder(form) as any); 
+        setMessage("Order created successfully!");
   
 
-      setMessage("✅ Order created successfully!");
+      setMessage(" Order created successfully!");
       setForm({
         warehouseId: "",
         agentId: "",
@@ -64,7 +81,7 @@ const OrderForm = () => {
       });
     } catch (error: any) {
       console.error(error);
-      setMessage("❌ Failed to create order");
+      setMessage("Failed to create order");
     }
   };
 
@@ -73,18 +90,20 @@ const OrderForm = () => {
       <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6">Create New Order</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Warehouse Select */}
           <div>
-            <Label>Warehouse</Label>
-            <select
+             <Label htmlFor="warehouseId">Warehouse</Label>
+             <select
               name="warehouseId"
               value={form.warehouseId}
               onChange={handleChange}
               required
-              className="w-full p-2 border rounded"
+              // disabled={warehouseLoading}
+              className="w-full mt-1 p-2 border rounded focus:outline-none focus:ring"
             >
-              <option value="">Select Warehouse</option>
-              {warehouses.map((wh: any) => (
+              <option value="">
+                 Select Warehouse
+              </option>
+              {wareHouse.map((wh:any) => (
                 <option key={wh._id} value={wh._id}>
                   {wh.name}
                 </option>
@@ -92,7 +111,6 @@ const OrderForm = () => {
             </select>
           </div>
 
-          {/* Agent Select */}
           <div>
             <Label>Agent</Label>
             <select
@@ -176,3 +194,4 @@ const OrderForm = () => {
 };
 
 export default OrderForm;
+

@@ -31,7 +31,7 @@ const fetchWarehouse = async () => {
 
     if (response.data) {
       // ✅ Save user and token
-      console.log(response,"<<<<<<<<<<<<<<<<<<<<<<<<");
+      console.log(response, "fetchwarehouse");
     }
 
     return response.data;

@@ -57,7 +57,7 @@ export const fetchAgents = createAsyncThunk<
   Agent[],
   void,
   { rejectValue: string }
->('warehouse/fetchAll', async (_, thunkAPI) => {
+>('agent/fetchAll', async (_, thunkAPI) => {
   try {
     const response = await agentService.fetchAgent();
     return response;
@@ -69,6 +69,35 @@ export const fetchAgents = createAsyncThunk<
   }
 });
 
+export const checkIn = createAsyncThunk<
+  any, 
+  string,
+  { rejectValue: string }
+>("agent/checkIn", async (id, thunkAPI) => {
+  try {
+    const res = await agentService.checkInAgent(id);
+    return res;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || error.message || "Something went wrong";
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const checkOut = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: string }
+>("agent/checkOut", async (id, thunkAPI) => {
+  try {
+    const res = await agentService.checkOutAgent(id);
+    return res;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || error.message || "Something went wrong";
+    return thunkAPI.rejectWithValue(message);
+  }
+});
 // ✅ Slice
 export const agentSlice = createSlice({
   name: 'agent',

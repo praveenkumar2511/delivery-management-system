@@ -37,9 +37,22 @@ const fetchOrder = async () => {
   }
 };
 
+
+const markAsReceived = async (id: string) => {
+  const res = await axios.patch(`${API_URL}/api/order/${id}/receive`);
+  return res.data;
+};
+
+const markAsDelivered = async (id: string) => {
+  const res = await axios.patch(`${API_URL}/api/order/${id}/deliver`);
+  return res.data;
+};
 const warehouseService = {
     createOrder,
-    fetchOrder
+    fetchOrder,
+    markAsReceived,
+  markAsDelivered,
+
 }
 
 

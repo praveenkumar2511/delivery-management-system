@@ -1,5 +1,7 @@
+// 
+
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();;
+const dotenv = require('dotenv').config();
 const { faker } = require('@faker-js/faker');
 
 const Warehouse = require('./models/Warehouse');
@@ -8,54 +10,63 @@ const Order = require('./models/Order');
 
 mongoose.connect(process.env.MONGO_URL)
   .then(async () => {
-    console.log('Connected to MongoDB');
+    console.log('✅ Connected to MongoDB');
 
-    // Clear existing data
-    await Warehouse.deleteMany();
+    // Clean up agents and orders only — keep warehouses
     await Agent.deleteMany();
     await Order.deleteMany();
 
-    // Create 4 warehouses
-    const warehouseNames = ['Chennai', 'Coimbatore', 'Bangalore', 'Mumbai'];
-    const warehouses = await Promise.all(
-      warehouseNames.map(name =>
-        Warehouse.create({
-          name: `Warehouse - ${name}`,
-          latitude: 13.0 + Math.random(),
-          longitude: 80.0 + Math.random()
-        })
-      )
-    );
+    // Your existing warehouse IDs
+    const warehouseIds = [
+      "68516c5eb7e337e21b343b8e", // Chennai
+      "68516c5eb7e337e21b343b91", // Mumbai
+      "68516c5eb7e337e21b343b8f", // Coimbatore
+      "68516c5eb7e337e21b343b90", // Bangalore
+      "685273901634492ff517a1e8"  // Nilgiris
+    ];
 
-    // Create 10 agents, randomly assign to warehouses
+    // Fetch warehouse docs so we can use lat/lng
+    const warehouses = await Warehouse.find({
+      _id: { $in: warehouseIds }
+    });
+
+    // Create agents, assign to random warehouses
     const agents = [];
     for (let i = 0; i < 10; i++) {
       const warehouse = warehouses[Math.floor(Math.random() * warehouses.length)];
-      agents.push(await Agent.create({
-name: faker.person.fullName(), // ✅ NEW
+      const agent = await Agent.create({
+        name: faker.person.fullName(),
         warehouseId: warehouse._id,
-        checkInTime: new Date(),
-        hoursWorked: 0,
-        kmCovered: 0
-      }));
+        currentSession: null,
+        sessions: []
+      });
+      agents.push(agent);
     }
 
-    // Create 100 random orders
-    for (let i = 0; i < 100; i++) {
+    // Create 50 orders, each assigned to a valid agent in same warehouse
+    for (let i = 0; i < 50; i++) {
       const warehouse = warehouses[Math.floor(Math.random() * warehouses.length)];
+      const agentCandidates = agents.filter(a => a.warehouseId.toString() === warehouse._id.toString());
+      const agent = agentCandidates[Math.floor(Math.random() * agentCandidates.length)];
+
       await Order.create({
         warehouseId: warehouse._id,
-        address: faker.address.streetAddress(),
-        latitude: warehouse.latitude + Math.random() * 0.1,
-        longitude: warehouse.longitude + Math.random() * 0.1,
+        agentId: agent?._id || null,
+        address: faker.location.streetAddress(),
+        latitude: warehouse.latitude + Math.random() * 0.05,
+        longitude: warehouse.longitude + Math.random() * 0.05,
         isDispatched: false,
-        deliveryDate: new Date()
+        deliveryDate: faker.date.future(),
+        status: "pending",
+        receivedAt: null,
+        deliveredAt: null
       });
     }
 
-    console.log('✅ Seeding complete!');
+    console.log('🌱 Seed complete!');
     process.exit();
   })
   .catch(err => {
-    console.error('DB Connection Error:', err);
+    console.error('❌ DB Error:', err);
+    process.exit(1);
   });

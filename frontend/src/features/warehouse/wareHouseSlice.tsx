@@ -3,10 +3,11 @@ import wareHouseService from './warehouseService';
 import { toast } from 'sonner';
 
 interface Warehouse {
-  id: string;
   name: string;
   latitude?: number;
   longitude?: number;
+  _id?: string;
+  
 }
 
 interface WarehouseState {
@@ -28,7 +29,7 @@ const initialState: WarehouseState = {
 // ✅ Create warehouse thunk
 export const newWarehouse = createAsyncThunk<
   Warehouse,
-  any,
+  Warehouse,
   { rejectValue: string }
 >('warehouse/create', async (warehouse, thunkAPI) => {
   try {

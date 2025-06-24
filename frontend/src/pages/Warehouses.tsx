@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { newWarehouse } from "../features/warehouse/wareHouseSlice";
 
 const WarehouseForm = () => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<any>({
     name: "",
     latitude: "",
     longitude: "",
